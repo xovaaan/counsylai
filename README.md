@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚖️ Counsyl AI – The Legal Operating System
 
-## Getting Started
+> **Transform legal complexity into actionable intelligence.** Counsyl AI is a production-ready Legal Operating System designed for modern law firms, combining verified AI research, deep contract intelligence, and robust practice management.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🏛️ Essential Intelligence for Modern Counsel
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![Hero Banner](/public/dashboard-hero.png)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🔍 Verified Legal Research
+Harness the power of Gemini 2.5 Flash to search across global and local regulations. Get cited, neutral, and accurate answers with a dedicated AI assistant tailored for law firms.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 📜 Digital Contract Vault & Intelligence
+Upload **PDF, DOCX, or Excel** files. Counsyl AI reads every word, identifies high-severity risks, detects missing clauses, and provides executive summaries in seconds.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🔥 Key Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Feature | Description | Visual |
+| :--- | :--- | :--- |
+| **Research AI** | Contextual search with web-access and citation support. | ![Research](/public/legal-research.png) |
+| **Contract Review** | Instant heatmaps of risks, liabilities, and missing protections. | ![Review](/public/contract-review.png) |
+| **Comparative Analysis**| Side-by-side tabular comparison of complex clauses. | ![Compare](/public/tabular-comparison.png) |
+| **Client & Matter Mgmt** | Centralized hub for managing clients, cases, and documents. | ![Clients](/public/client-management.png) |
+| **Document Vault** | Secure, versioned storage for all firm assets. | ![Vault](/public/document-vault.png) |
+| **Audit Compliance** | Full transparency logs for every AI interaction. | ![Audit](/public/audit-logs.png) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ⚙️ Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Framework**: [Next.js 14 (App Router)](https://nextjs.org/)
+- **AI Engine**: [Google Gemini 2.5 Flash](https://deepmind.google/technologies/gemini/)
+- **Auth**: [Clerk](https://clerk.com/)
+- **Database**: [PostgreSQL (Prisma ORM)](https://www.prisma.io/)
+- **Search**: [Serper.dev](https://serper.dev/)
+- **Parsing**: `Mammoth` (Docx), `XLSX` (Excel), `pdf2json` (PDF)
+- **Styling**: Tailwind CSS & Lucide Icons
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🚀 Getting Started
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-repo/counsyl-ai.git
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+   Create a `.env` file with the following:
+   ```env
+   DATABASE_URL="your-postgres-url"
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="your-clerk-pk"
+   CLERK_SECRET_KEY="your-clerk-sk"
+   GEMINI_API_KEY="your-gemini-key"
+   SERPER_API_KEY="your-serper-key"
+   ```
+
+4. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 🛡️ Security & Privacy
+Counsyl AI treats legal data with the highest sensitivity. Every AI response is logged for auditability, and data is isolated per firm using professional multitenancy patterns.
+
+---
+
+> [!IMPORTANT]
+> **Counsyl AI** is an assistant and does not provide legal advice. All AI-generated content should be reviewed by a licensed professional.
+
+---
+© 2026 Counsyl AI. All Rights Reserved. For support, contact [support@counsyl.ai](mailto:support@counsyl.ai)
