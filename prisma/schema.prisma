@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model ResearchQuery {
+  id             String   @id @default(uuid())
+  userId         String
+  organizationId String?
+  query          String
+  jurisdiction   String?
+  answer         String   @db.Text
+  sources        Json?
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([organizationId])
+  @@map("research_queries")
+}
+
+model ContractAnalysis {
+  id             String   @id @default(uuid())
+  userId         String
+  organizationId String?
+  fileName       String
+  fileUrl        String?
+  risks          Json?
+  missingClauses Json?
+  recommendations Json?
+  summary        String?  @db.Text
+  createdAt      DateTime @default(now())
+
+  @@index([userId])
+  @@index([organizationId])
+  @@map("contract_analyses")
+}
+
+model Client {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  email          String?
+  phone          String?
+  company        String?
+  status         String   @default("active")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  matters        Matter[]
+
+  @@index([organizationId])
+  @@map("clients")
+}
+
+model Matter {
+  id             String     @id @default(uuid())
+  organizationId String
+  clientId       String
+  client         Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  title          String
+  description    String?    @db.Text
+  status         String     @default("open")
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  documents      Document[]
+
+  @@index([organizationId])
+  @@index([clientId])
+  @@map("matters")
+}
+
+model Document {
+  id             String   @id @default(uuid())
+  organizationId String
+  matterId       String?
+  matter         Matter?  @relation(fields: [matterId], references: [id], onDelete: Cascade)
+  name           String
+  fileUrl        String?
+  textContent    String?  @db.Text
+  fileType       String?
+  fileSize       Int?
+  uploadedBy     String?
+  createdAt      DateTime      @default(now())
+  chatSessions   ChatSession[]
+
+  @@index([organizationId])
+  @@index([matterId])
+  @@map("documents")
+}
+
+model AuditLog {
+  id             String   @id @default(uuid())
+  organizationId String
+  userId         String
+  action         String
+  resourceType   String?
+  resourceId     String?
+  ipAddress      String?
+  userAgent      String?
+  createdAt      DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("audit_logs")
+}
+
+model ChatSession {
+  id             String        @id @default(uuid())
+  userId         String
+  organizationId String
+  documentId     String
+  document       Document      @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  messages       ChatMessage[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([documentId])
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id        String      @id @default(uuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String      // "user" or "model"
+  content   String      @db.Text
+  sources   Json?
+  createdAt DateTime    @default(now())
+
+  @@index([sessionId])
+  @@map("chat_messages")
+}
+
+model User {
+  id                  String    @id
+  email               String    @unique
+  name                String?
+  dateOfBirth         DateTime?
+  firmName            String?
+  country             String?
+  firmSize            String?
+  professionalEmail   String?
+  website             String?
+  referralSource      String?
+  painPoints          Json?     // Storing as JSON to be flexible (e.g. array of strings)
+  onboardingCompleted Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@map("users")
+}
