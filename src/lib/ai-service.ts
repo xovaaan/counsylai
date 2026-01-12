@@ -170,7 +170,48 @@ User Question: ${message}
 }
 
 export async function extractTableData(docText: string) {
-    // ... existing extractTableData implementation
+    const genAI = getGenAI();
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt = `
+Extract the following key points from the legal document text below:
+1. "partyNames": Names of the parties involved.
+2. "effectiveDate": When the contract starts.
+3. "terminationDate": When it ends or how it terminates.
+4. "governingLaw": The jurisdiction/law governing the contract.
+5. "liabilityLimit": Any clauses regarding limitation of liability.
+
+Document Text:
+"""
+${docText.substring(0, 500000)}
+"""
+
+Response Format: JSON only.
+Structure:
+{
+  "partyNames": "",
+  "effectiveDate": "",
+  "terminationDate": "",
+  "governingLaw": "",
+  "liabilityLimit": ""
+}
+    `;
+
+    try {
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        const cleanJson = text.replace(/```json/g, '').replace(/```/g, '').trim();
+        return JSON.parse(cleanJson);
+    } catch (e) {
+        console.error("Table extraction failed", e);
+        return {
+            partyNames: "Error",
+            effectiveDate: "Error",
+            terminationDate: "Error",
+            governingLaw: "Error",
+            liabilityLimit: "Error"
+        };
+    }
 }
 
 export async function analyzeContractWithAI(docText: string) {

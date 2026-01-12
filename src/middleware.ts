@@ -7,17 +7,17 @@ const hasValidClerkKeys =
 
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)"]);
 
-export default function middleware(req: any) {
+export default clerkMiddleware(async (auth, req) => {
     // If no valid Clerk keys, bypass authentication for demo mode
     if (!hasValidClerkKeys) {
-        return NextResponse.next();
+        return;
     }
 
-    // Otherwise use Clerk middleware
-    return clerkMiddleware(async (auth, req) => {
-        if (isProtectedRoute(req)) await auth.protect();
-    })(req);
-}
+    // Otherwise protect routes
+    if (isProtectedRoute(req)) {
+        await auth.protect();
+    }
+});
 
 export const config = {
     matcher: [

@@ -25,7 +25,7 @@ export default function DocumentReviewPage() {
         const res = await uploadAndExtract(formData);
         if (res.success) {
             setResult(res.data);
-            setExtractedItems(prev => [...prev, { fileName: res.fileName, ...res.data }]);
+            setExtractedItems(prev => [...prev, { fileName: res.fileName, ...(res.data as object) }]);
         } else {
             alert("Failed to process");
         }
