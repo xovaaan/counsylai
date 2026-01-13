@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { LucideIcon, Scale, FileSearch, TableProperties, Users, Lock, History } from "lucide-react";
+import { LucideIcon, Scale, FileSearch, TableProperties, Users, Lock, History, Wand2, BookOpenCheck } from "lucide-react";
 
 interface FeatureProps {
     title: string;
@@ -54,6 +54,18 @@ export function Features() {
             description: "Upload any contract (PDF/DOCX) and our AI will instantly highlight risks, missing clauses, and unusual terms.",
             icon: Scale,
             image: "/contract-review.png",
+        },
+        {
+            title: "Clause Library",
+            description: "Searchable repository of legal clauses with templates",
+            icon: BookOpenCheck,
+            image: "/clause-library.png",
+        },
+        {
+            title: "Automated Contract Generation",
+            description: "AI-powered contract creation from templates",
+            icon: Wand2,
+            image: "/contract-generation.png",
         },
         {
             title: "Comparative Analysis",

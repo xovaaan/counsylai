@@ -155,3 +155,58 @@ model User {
 
   @@map("users")
 }
+
+model ClauseTemplate {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  category       String   // "termination", "liability", "payment", "confidentiality", etc.
+  description    String?  @db.Text
+  content        String   @db.Text
+  variables      Json?    // Array of variable names like ["partyName", "amount"]
+  jurisdiction   String?  // "Bangladesh", "UK", "US", etc.
+  isPublic       Boolean  @default(false)
+  createdBy      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([category])
+  @@map("clause_templates")
+}
+
+model ContractTemplate {
+  id             String   @id @default(uuid())
+  organizationId String
+  name           String
+  type           String   // "NDA", "Employment", "Service Agreement", etc.
+  description    String?  @db.Text
+  sections       Json     // Array of section objects with clause references
+  variables      Json?    // Required variables for this template
+  isPublic       Boolean  @default(false)
+  createdBy      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([type])
+  @@map("contract_templates")
+}
+
+model GeneratedContract {
+  id             String   @id @default(uuid())
+  organizationId String
+  userId         String
+  templateId     String?
+  title          String
+  type           String
+  content        String   @db.Text
+  variables      Json?    // Filled variable values
+  status         String   @default("draft") // "draft", "final", "signed"
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("generated_contracts")
+}

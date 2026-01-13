@@ -14,7 +14,10 @@ import {
     Settings,
     LayoutDashboard,
     MessageSquare,
-    Table
+    Table,
+    BookOpen,
+    Layout,
+    FileEdit
 } from "lucide-react";
 
 const sidebarItems = [
@@ -23,6 +26,9 @@ const sidebarItems = [
     { name: "Review", href: "/dashboard/review", icon: Table },
     { name: "Chat with Docs", href: "/dashboard/chat", icon: MessageSquare },
     { name: "Contracts", href: "/dashboard/contracts", icon: FileText },
+    { name: "Clause Library", href: "/dashboard/clause-library", icon: BookOpen },
+    { name: "Templates", href: "/dashboard/templates", icon: Layout },
+    { name: "Generate", href: "/dashboard/generate", icon: FileEdit },
     { name: "Compare", href: "/dashboard/compare", icon: Scale },
     { name: "Clients", href: "/dashboard/clients", icon: Users },
     { name: "Documents", href: "/dashboard/documents", icon: FolderOpen },
