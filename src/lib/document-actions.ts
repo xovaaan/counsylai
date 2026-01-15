@@ -2,15 +2,10 @@
 
 import { extractTableData, chatWithDocumentContext, searchWeb } from "@/lib/ai-service";
 import { auth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient(); // Use singleton if available in @/lib/db, checking...
+import { prisma } from "@/lib/db";
 
 // import pdf from "pdf-parse"; 
 // const pdf = require("pdf-parse");
-const PDFParser = require("pdf2json");
-const mammoth = require("mammoth");
-const XLSX = require("xlsx");
 import { analyzeContractWithAI } from "@/lib/ai-service";
 
 // Function to parse PDF from FormData
@@ -18,6 +13,10 @@ async function parsePdf(file: File): Promise<string> {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
+    // Dynamic import for CommonJS module compatibility with Turbopack
+    const pdf2jsonModule = await import("pdf2json");
+    const PDFParser = pdf2jsonModule.default || pdf2jsonModule;
+    
     return new Promise((resolve, reject) => {
         const pdfParser = new PDFParser(null, 1); // 1 = enable raw text extraction
 
@@ -261,7 +260,9 @@ export async function getRecentChatSessions() {
 async function parseDocx(file: File): Promise<string> {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const result = await mammoth.extractRawText({ buffer });
+    // Dynamic import for CommonJS module compatibility with Turbopack
+    const mammoth = await import("mammoth");
+    const result = await mammoth.default.extractRawText({ buffer });
     return result.value;
 }
 
@@ -269,6 +270,8 @@ async function parseDocx(file: File): Promise<string> {
 async function parseExcel(file: File): Promise<string> {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    // Dynamic import for CommonJS module compatibility with Turbopack
+    const XLSX = await import("xlsx");
     const workbook = XLSX.read(buffer, { type: 'buffer' });
     let text = "";
     workbook.SheetNames.forEach((sheetName: string) => {

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { uploadAndExtract } from "@/lib/document-actions";
-import { useToast } from "@/components/ui/use-toast";
+// import { useToast } from "@/components/ui/use-toast"; // Commented out - not used
 
 export default function DocumentReviewPage() {
     const [file, setFile] = useState<File | null>(null);
@@ -25,7 +25,7 @@ export default function DocumentReviewPage() {
         const res = await uploadAndExtract(formData);
         if (res.success) {
             setResult(res.data);
-            setExtractedItems(prev => [...prev, { fileName: res.fileName, ...(res.data as object) }]);
+            setExtractedItems(prev => [...prev, { fileName: res.fileName, ...(res.data || {}) }]);
         } else {
             alert("Failed to process");
         }

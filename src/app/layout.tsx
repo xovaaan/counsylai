@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
 const inter = Inter({
@@ -20,8 +21,6 @@ export const metadata: Metadata = {
     icon: "/favicon.svg",
   },
 };
-
-import { ClerkProvider } from "@clerk/nextjs";
 
 const hasValidClerkKeys =
   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&

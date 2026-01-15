@@ -19,21 +19,26 @@ export default async function DashboardLayout({
         redirect("/sign-in");
     }
 
-    // Check onboarding status
+    // Auto-create user in database if they don't exist (onboarding removed)
     try {
         const dbUser = await prisma.user.findUnique({
             where: { id: user.id }
         });
 
-        // If user doesn't exist (first login) or hasn't completed onboarding
-        if (!dbUser || !dbUser.onboardingCompleted) {
-            redirect("/onboarding");
+        // Create user automatically if they don't exist
+        if (!dbUser) {
+            await prisma.user.create({
+                data: {
+                    id: user.id,
+                    email: user.emailAddresses[0]?.emailAddress || "",
+                    name: user.fullName || user.firstName || "User",
+                    onboardingCompleted: true, // Mark as completed since onboarding is removed
+                }
+            });
         }
     } catch (e) {
-        // If table doesn't exist yet or DB error, we might log it but for now proceed 
-        // to avoid locking out if migration hasn't run. 
-        // However, if table exists and user missing, redirect is correct.
-        // console.error(e);
+        // If database error, continue anyway to avoid locking out users
+        console.error("Failed to create/check user:", e);
     }
 
     return (

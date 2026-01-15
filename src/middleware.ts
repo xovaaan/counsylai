@@ -15,7 +15,16 @@ export default clerkMiddleware(async (auth, req) => {
 
     // Otherwise protect routes
     if (isProtectedRoute(req)) {
-        await auth.protect();
+        const { userId } = await auth();
+        
+        // If not authenticated, redirect to sign-in
+        if (!userId) {
+            const signInUrl = new URL("/sign-in", req.url);
+            signInUrl.searchParams.set("redirect_url", req.url);
+            return NextResponse.redirect(signInUrl);
+        }
+
+        // Onboarding check removed - users can access dashboard directly
     }
 });
 

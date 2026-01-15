@@ -75,25 +75,35 @@ export async function saveContractAnalysis(data: {
 // --- Client Actions ---
 
 export async function createClient(data: {
-    organizationId: string;
     name: string;
     email?: string;
     company?: string;
+    phone?: string;
 }) {
+    const { auth } = await import("@clerk/nextjs/server");
+    const session = await auth();
+    const userId = session?.userId;
+    
+    if (!userId) {
+        return { success: false, error: "Unauthorized" };
+    }
+
     try {
+        const organizationId = "personal_" + userId;
         const result = await prisma.client.create({
             data: {
-                organizationId: data.organizationId,
+                organizationId,
                 name: data.name,
                 email: data.email,
                 company: data.company,
+                phone: data.phone,
             },
         });
         revalidatePath("/dashboard/clients");
         return { success: true, data: result };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to create client:", error);
-        return { success: false, error: "Failed to create client" };
+        return { success: false, error: error.message || "Failed to create client" };
     }
 }
 

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { AddClientButton } from "@/components/dashboard/add-client-button";
 
 export default async function ClientsPage() {
     const user = await currentUser();
@@ -31,10 +32,7 @@ export default async function ClientsPage() {
                     <h1 className="text-3xl font-serif font-bold text-primary">Clients</h1>
                     <p className="text-muted-foreground">Manage your firm's relationships and active matters.</p>
                 </div>
-                <Button>
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Add New Client
-                </Button>
+                <AddClientButton />
             </div>
 
             <div className="flex gap-4 mb-6">
@@ -108,7 +106,7 @@ export default async function ClientsPage() {
                         <Users className="w-10 h-10 mx-auto text-slate-300 mb-4" />
                         <h3 className="text-lg font-medium text-slate-900">No Clients Found</h3>
                         <p className="text-slate-500 mb-6">Get started by adding your first client.</p>
-                        <Button>Add Client</Button>
+                        <AddClientButton />
                     </div>
                 )}
             </div>

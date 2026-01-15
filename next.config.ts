@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '12mb',
     },
   },
+  // Fix for Prisma + Turbopack on Windows
+  serverExternalPackages: ['@prisma/client'],
 };
 
 export default nextConfig;

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CardContent, Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { completeOnboarding } from "@/lib/actions";
-import { useToast } from "@/components/ui/use-toast"; // Assuming we have this or similar
+// import { useToast } from "@/components/ui/use-toast"; // Commented out - not used
 
 export function SettingsForm({ user }: { user: any }) {
     const [formData, setFormData] = useState({
