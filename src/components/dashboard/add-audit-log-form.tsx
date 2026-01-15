@@ -5,51 +5,57 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { X, Loader2 } from "lucide-react";
-import { createClient } from "@/lib/actions";
-import { useRouter } from "next/navigation";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { X, Loader2 } from "lucide-react";
+import { createAuditLog } from "@/lib/actions";
+import { useRouter } from "next/navigation";
 
-interface AddClientFormProps {
+interface AddAuditLogFormProps {
     onClose: () => void;
 }
 
-export function AddClientForm({ onClose }: AddClientFormProps) {
+const RESOURCE_TYPES = [
+    "client",
+    "contract",
+    "document",
+    "matter",
+    "user",
+    "system",
+    "other"
+];
+
+export function AddAuditLogForm({ onClose }: AddAuditLogFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        company: "",
-        phone: "",
-        status: "active",
+        action: "",
+        resourceType: "",
+        resourceId: "",
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError("");
         
-        if (!formData.name.trim()) {
-            setError("Client name is required");
+        if (!formData.action.trim()) {
+            setError("Action is required");
             return;
         }
 
         setLoading(true);
         try {
-            const result = await createClient({
-                name: formData.name.trim(),
-                email: formData.email.trim() || undefined,
-                company: formData.company.trim() || undefined,
-                phone: formData.phone.trim() || undefined,
-                status: formData.status,
+            const result = await createAuditLog({
+                action: formData.action.trim(),
+                resourceType: formData.resourceType || undefined,
+                resourceId: formData.resourceId.trim() || undefined,
             });
 
             if (result.success) {
                 router.refresh();
                 onClose();
             } else {
-                setError(result.error || "Failed to create client");
+                setError(result.error || "Failed to create audit log");
             }
         } catch (err: any) {
             setError(err.message || "An error occurred");
@@ -63,8 +69,8 @@ export function AddClientForm({ onClose }: AddClientFormProps) {
             <Card className="w-full max-w-md bg-white">
                 <CardHeader className="flex flex-row items-center justify-between pb-4">
                     <div>
-                        <CardTitle>Add New Client</CardTitle>
-                        <CardDescription>Enter the client information below</CardDescription>
+                        <CardTitle>Add Audit Log</CardTitle>
+                        <CardDescription>Record a new activity or event</CardDescription>
                     </div>
                     <Button
                         variant="ghost"
@@ -78,68 +84,46 @@ export function AddClientForm({ onClose }: AddClientFormProps) {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="name">Client Name *</Label>
+                            <Label htmlFor="action">Action *</Label>
                             <Input
-                                id="name"
-                                placeholder="John Doe"
-                                value={formData.name}
-                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                id="action"
+                                placeholder="e.g., Created new contract, Updated client status"
+                                value={formData.action}
+                                onChange={(e) => setFormData({ ...formData, action: e.target.value })}
                                 required
                                 className="bg-white"
                             />
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="john@example.com"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                className="bg-white"
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="company">Company</Label>
-                            <Input
-                                id="company"
-                                placeholder="Company Name"
-                                value={formData.company}
-                                onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                                className="bg-white"
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="phone">Phone</Label>
-                            <Input
-                                id="phone"
-                                type="tel"
-                                placeholder="+1 (555) 123-4567"
-                                value={formData.phone}
-                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                className="bg-white"
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="status">Status</Label>
+                            <Label htmlFor="resourceType">Resource Type</Label>
                             <Select
-                                value={formData.status}
-                                onValueChange={(value) => setFormData({ ...formData, status: value })}
+                                value={formData.resourceType}
+                                onValueChange={(value) => setFormData({ ...formData, resourceType: value })}
                             >
                                 <SelectTrigger className="bg-white hover:bg-slate-100 focus:bg-slate-100">
-                                    <SelectValue />
+                                    <SelectValue placeholder="Select resource type" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="active" className="bg-white hover:bg-slate-100 focus:bg-slate-100">Active</SelectItem>
-                                    <SelectItem value="working" className="bg-white hover:bg-slate-100 focus:bg-slate-100">Working</SelectItem>
-                                    <SelectItem value="pending" className="bg-white hover:bg-slate-100 focus:bg-slate-100">Pending</SelectItem>
-                                    <SelectItem value="not active" className="bg-white hover:bg-slate-100 focus:bg-slate-100">Not Active</SelectItem>
+                                    {RESOURCE_TYPES.map((type) => (
+                                        <SelectItem key={type} value={type} className="bg-white hover:bg-slate-100 focus:bg-slate-100 capitalize">
+                                            {type}
+                                        </SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="resourceId">Resource ID</Label>
+                            <Input
+                                id="resourceId"
+                                placeholder="e.g., client-123, contract-456 (optional)"
+                                value={formData.resourceId}
+                                onChange={(e) => setFormData({ ...formData, resourceId: e.target.value })}
+                                className="bg-white"
+                            />
+                            <p className="text-xs text-slate-500">Optional: ID of the resource this action relates to</p>
                         </div>
 
                         {error && (
@@ -169,7 +153,7 @@ export function AddClientForm({ onClose }: AddClientFormProps) {
                                         Adding...
                                     </>
                                 ) : (
-                                    "Add Client"
+                                    "Add Log"
                                 )}
                             </Button>
                         </div>

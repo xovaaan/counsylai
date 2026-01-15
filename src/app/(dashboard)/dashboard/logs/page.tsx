@@ -1,4 +1,4 @@
-import { History, Shield, ShieldAlert, Download, Search } from "lucide-react";
+import { History, Shield, ShieldAlert, Download, Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { prisma } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { AddAuditLogButton } from "@/components/dashboard/add-audit-log-button";
 
 export default async function AuditLogsPage() {
     const user = await currentUser();
@@ -28,10 +29,13 @@ export default async function AuditLogsPage() {
                     <h1 className="text-3xl font-serif font-bold text-primary">Audit Logs</h1>
                     <p className="text-muted-foreground">Comprehensive trail of all workspace activity for compliance and security.</p>
                 </div>
-                <Button variant="outline">
-                    <Download className="w-4 h-4 mr-2" />
-                    Export Report
-                </Button>
+                <div className="flex gap-2">
+                    <AddAuditLogButton />
+                    <Button variant="outline">
+                        <Download className="w-4 h-4 mr-2" />
+                        Export Report
+                    </Button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

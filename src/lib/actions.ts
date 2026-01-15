@@ -79,6 +79,7 @@ export async function createClient(data: {
     email?: string;
     company?: string;
     phone?: string;
+    status?: string;
 }) {
     const { auth } = await import("@clerk/nextjs/server");
     const session = await auth();
@@ -97,13 +98,66 @@ export async function createClient(data: {
                 email: data.email,
                 company: data.company,
                 phone: data.phone,
+                status: data.status || "active",
             },
         });
+
+        // Create audit log for new client
+        await createAuditLog({
+            action: `Created new client: ${data.name}`,
+            resourceType: "client",
+            resourceId: result.id,
+        });
+
         revalidatePath("/dashboard/clients");
         return { success: true, data: result };
     } catch (error: any) {
         console.error("Failed to create client:", error);
         return { success: false, error: error.message || "Failed to create client" };
+    }
+}
+
+export async function updateClientStatus(clientId: string, status: string) {
+    const { auth } = await import("@clerk/nextjs/server");
+    const session = await auth();
+    const userId = session?.userId;
+    
+    if (!userId) {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        const organizationId = "personal_" + userId;
+        
+        // Verify client belongs to user's organization
+        const client = await prisma.client.findFirst({
+            where: {
+                id: clientId,
+                organizationId,
+            },
+        });
+
+        if (!client) {
+            return { success: false, error: "Client not found" };
+        }
+
+        const result = await prisma.client.update({
+            where: { id: clientId },
+            data: { status },
+        });
+
+        // Create audit log for status change
+        await createAuditLog({
+            action: `Updated client status to ${status}`,
+            resourceType: "client",
+            resourceId: clientId,
+        });
+
+        revalidatePath("/dashboard/clients");
+        return { success: true, data: result };
+    } catch (error: any) {
+        console.error("Failed to update client status:", error);
+        return { success: false, error: error.message || "Failed to update status" };
     }
 }
 
@@ -117,6 +171,50 @@ export async function getClients(organizationId: string) {
     } catch (error) {
         console.error("Failed to fetch clients:", error);
         return { success: false, error: "Failed to load clients" };
+    }
+}
+
+// --- Audit Log Actions ---
+
+export async function createAuditLog(data: {
+    action: string;
+    resourceType?: string;
+    resourceId?: string;
+    ipAddress?: string;
+    userAgent?: string;
+}) {
+    const { auth } = await import("@clerk/nextjs/server");
+    const session = await auth();
+    const userId = session?.userId;
+    
+    if (!userId) {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        const organizationId = "personal_" + userId;
+        
+        // Get IP and user agent from headers if available
+        const ipAddress = data.ipAddress || null;
+        const userAgent = data.userAgent || null;
+
+        const log = await prisma.auditLog.create({
+            data: {
+                organizationId,
+                userId,
+                action: data.action,
+                resourceType: data.resourceType || null,
+                resourceId: data.resourceId || null,
+                ipAddress,
+                userAgent,
+            },
+        });
+
+        revalidatePath("/dashboard/logs");
+        return { success: true, data: log };
+    } catch (error: any) {
+        console.error("Failed to create audit log:", error);
+        return { success: false, error: error.message || "Failed to create audit log" };
     }
 }
 

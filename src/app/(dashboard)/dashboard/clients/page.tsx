@@ -7,6 +7,8 @@ import { prisma } from "@/lib/db";
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { AddClientButton } from "@/components/dashboard/add-client-button";
+import { ClientStatusBadge } from "@/components/dashboard/client-status-badge";
+import { UpdateClientStatusButton } from "@/components/dashboard/update-client-status-button";
 
 export default async function ClientsPage() {
     const user = await currentUser();
@@ -61,11 +63,7 @@ export default async function ClientsPage() {
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-3">
                                             <h3 className="text-lg font-serif font-semibold truncate">{client.name}</h3>
-                                            <Badge variant={
-                                                client.status === "active" ? "success" : "secondary"
-                                            } className="text-[10px] py-0 capitalize">
-                                                {client.status}
-                                            </Badge>
+                                            <ClientStatusBadge status={client.status} />
                                         </div>
                                         <div className="flex items-center gap-4 mt-1 text-sm text-slate-500">
                                             {client.email && (
@@ -90,6 +88,7 @@ export default async function ClientsPage() {
                                         <div className="w-px h-8 bg-slate-100"></div>
                                     </div>
                                     <div className="flex items-center gap-2">
+                                        <UpdateClientStatusButton clientId={client.id} currentStatus={client.status} />
                                         <Button variant="ghost" size="icon" className="group-hover:text-primary">
                                             <ExternalLink className="w-4 h-4" />
                                         </Button>

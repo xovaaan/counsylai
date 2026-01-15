@@ -18,7 +18,7 @@ async function parsePdf(file: File): Promise<string> {
     const PDFParser = pdf2jsonModule.default || pdf2jsonModule;
     
     return new Promise((resolve, reject) => {
-        const pdfParser = new PDFParser(null, 1); // 1 = enable raw text extraction
+        const pdfParser = new PDFParser(null, true); // true = enable raw text extraction
 
         pdfParser.on("pdfParser_dataError", (errData: any) => {
             console.error("PDF Parser Error", errData.parserError);
